@@ -1,25 +1,18 @@
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet } from "react-native";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
-import { router } from "expo-router"; // navigate to other screens
 
-export default function TabOneScreen() {
-  const AddTask = () => {
-    alert("Add Task");
-    router.push("/add-task");
-  };
-
+export default function SettingsScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tasks</Text>
+      <Text style={styles.title}>Tab Two</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
-      {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
-      <Button title="Add Task" onPress={AddTask} />
+      <EditScreenInfo path="app/(tabs)/two.tsx" />
     </View>
   );
 }
