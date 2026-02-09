@@ -12,12 +12,19 @@ import {
 import { Task } from "../../types/Task";
 
 export default function TasksScreen() {
+  const priorityColors = {
+    high: "#ffe5e5",
+    medium: "#fff4cc",
+    low: "#e6f7e6",
+  };
+  const [filter, setFilter] = useState<"all" | "completed" | "active">("all");
   const [tasks, setTasks] = useState<Task[]>([
     {
       id: "1",
       title: "Learn Expo",
       description: "Complete the first module",
       completed: false,
+      priority: "high",
       createdAt: new Date(),
     },
     {
@@ -25,6 +32,15 @@ export default function TasksScreen() {
       title: "Test task",
       description: "Another task for testing",
       completed: false,
+      priority: "low",
+      createdAt: new Date(),
+    },
+    {
+      id: "3",
+      title: "Another test task",
+      description: "Another task for testing medium priority",
+      completed: false,
+      priority: "medium",
       createdAt: new Date(),
     },
   ]);
@@ -37,7 +53,10 @@ export default function TasksScreen() {
   };
   const renderTask = ({ item }: { item: Task }) => (
     <TouchableOpacity
-      style={styles.taskItem}
+      style={[
+        styles.taskItem,
+        { backgroundColor: priorityColors[item.priority] },
+      ]}
       onPress={() => toggleTask(item.id)}
     >
       <View style={styles.taskContent}>
@@ -62,10 +81,45 @@ export default function TasksScreen() {
       </Pressable>
     </TouchableOpacity>
   );
+  let filteredTasks = tasks;
+
+  if (filter === "completed") {
+    filteredTasks = tasks.filter((task) => task.completed);
+  }
+
+  if (filter === "active") {
+    filteredTasks = tasks.filter((task) => !task.completed);
+  }
   return (
     <View style={styles.container}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          padding: 16,
+          backgroundColor: "#f5f5f5",
+        }}
+      >
+        <Pressable
+          onPress={() => setFilter("all")}
+          style={{ cursor: "pointer" }}
+        >
+          <Text>All</Text>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter("active")}>
+          <Text>Active</Text>
+        </Pressable>
+
+        <Pressable onPress={() => setFilter("completed")}>
+          <Text>Completed</Text>
+        </Pressable>
+      </View>
+      <Text style={{ padding: 16, fontStyle: "italic", color: "#666" }}>
+        Showing {filter} tasks...
+      </Text>
       <FlatList
-        data={tasks}
+        data={filteredTasks}
         renderItem={renderTask}
         keyExtractor={(item) => item.id}
         style={styles.list}
