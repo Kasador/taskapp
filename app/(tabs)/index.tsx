@@ -20,6 +20,13 @@ export default function TasksScreen() {
       completed: false,
       createdAt: new Date(),
     },
+    {
+      id: "2",
+      title: "Test task",
+      description: "Another task for testing",
+      completed: false,
+      createdAt: new Date(),
+    },
   ]);
   const toggleTask = (id: string) => {
     setTasks(
