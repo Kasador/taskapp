@@ -1,37 +1,83 @@
-import { StyleSheet, Button } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
-import { Text, View } from "@/components/Themed";
-import { router } from "expo-router"; // navigate to other screens
-
+import { router } from "expo-router";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 export default function AddTaskScreen() {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const handleSave = () => {
+    if (title.trim()) {
+      // In a real app, this would save to state management or database
+      console.log("Saving task:", { title, description });
+      router.back();
+    }
+  };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add a Task</Text>
-      <View
-        style={styles.separator}
-        lightColor="#eee"
-        darkColor="rgba(255,255,255,0.1)"
-      />
-      {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
-      <Button title="Back to Tasks" onPress={() => router.push("/")} />
+      <View style={styles.form}>
+        <Text style={styles.label}>Title</Text>
+        <TextInput
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Enter task title"
+        />
+        <Text style={styles.label}>Description</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Enter task description"
+          multiline
+          numberOfLines={4}
+        />
+        <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+          <Text style={styles.saveButtonText}>Save Task</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: "#f5f5f5",
   },
-  title: {
-    fontSize: 20,
+  form: {
+    padding: 16,
+  },
+  label: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 8,
+    marginTop: 16,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  input: {
+    backgroundColor: "white",
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+  },
+  saveButton: {
+    backgroundColor: "#007AFF",
+    padding: 16,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 24,
+  },
+  saveButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
