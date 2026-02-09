@@ -1,13 +1,16 @@
+import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { Task } from "../../types/Task";
+
 export default function TasksScreen() {
   const [tasks, setTasks] = useState<Task[]>([
     {
@@ -38,7 +41,18 @@ export default function TasksScreen() {
         </Text>
         <Text style={styles.taskDescription}>{item.description}</Text>
       </View>
-      <Text style={styles.taskStatus}>{item.completed ? "✅" : "⭕"}</Text>
+      <Text style={styles.taskStatus}>
+        {item.completed ? (
+          <Ionicons name="checkmark-circle" size={24} color="green" />
+        ) : (
+          <Ionicons name="ellipse-outline" size={24} color="red" />
+        )}
+      </Text>
+      <Pressable
+        onPress={() => setTasks(tasks.filter((task) => task.id !== item.id))}
+      >
+        <Ionicons name="trash" size={24} color="black" />
+      </Pressable>
     </TouchableOpacity>
   );
   return (
