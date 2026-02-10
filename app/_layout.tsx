@@ -36,7 +36,16 @@ export default function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    // Add keyboard shortcut for adding a task
+    if (error) throw error;
+  }, [error]);
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  useEffect(() => {
     if (Platform.OS !== "web") return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -47,11 +56,10 @@ export default function RootLayout() {
     };
 
     document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [router]);
+
+  if (!loaded) return null;
 
   return <RootLayoutNav />;
 }

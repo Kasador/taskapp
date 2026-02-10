@@ -116,7 +116,11 @@ export default function TasksScreen() {
         </Pressable>
       </View>
       <Text style={{ padding: 16, fontStyle: "italic", color: "#666" }}>
-        Showing {filter} tasks...
+        Showing all{" "}
+        <Text style={{ fontWeight: "bold", color: "#007aff" }}>
+          {filteredTasks.length} {filter}
+        </Text>{" "}
+        tasks...
       </Text>
       <FlatList
         data={filteredTasks}
