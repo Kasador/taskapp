@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -51,6 +52,22 @@ export default function TasksScreen() {
       ),
     );
   };
+  const deleteTask = (id: string) => {
+    // https://reactnative.dev/docs/alert
+    Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        style: "destructive",
+        onPress: () => {
+          setTasks(tasks.filter((task) => task.id !== id));
+        },
+      },
+    ]);
+  };
   const renderTask = ({ item }: { item: Task }) => (
     <TouchableOpacity
       style={[
@@ -74,9 +91,7 @@ export default function TasksScreen() {
           <Ionicons name="ellipse-outline" size={24} color="red" />
         )}
       </Text>
-      <Pressable
-        onPress={() => setTasks(tasks.filter((task) => task.id !== item.id))}
-      >
+      <Pressable onPress={() => deleteTask(item.id)}>
         <Ionicons name="trash" size={24} color="black" />
       </Pressable>
     </TouchableOpacity>
