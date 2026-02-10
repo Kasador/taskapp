@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import React, { useState } from "react";
+import { Link, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import {
   Alert,
   FlatList,
@@ -10,7 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Task } from "../../types/Task";
+// import { Task } from "../../types/Task";
+import { useTasks } from "../../hooks/useTasks";
+import { Task } from "../../services/storage";
 
 export default function TasksScreen() {
   const priorityColors = {
@@ -18,83 +20,73 @@ export default function TasksScreen() {
     medium: "#fff4cc",
     low: "#e6f7e6",
   };
+
   const [filter, setFilter] = useState<"all" | "completed" | "active">("all");
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Learn Expo",
-      description: "Complete the first module",
-      completed: false,
-      priority: "high",
-      createdAt: new Date(),
-    },
-    {
-      id: "2",
-      title: "Test task",
-      description: "Another task for testing",
-      completed: false,
-      priority: "low",
-      createdAt: new Date(),
-    },
-    {
-      id: "3",
-      title: "Another test task",
-      description: "Another task for testing medium priority",
-      completed: false,
-      priority: "medium",
-      createdAt: new Date(),
-    },
-  ]);
-  const toggleTask = (id: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
-    );
+
+  const { tasks, loading, error, deleteTask, updateTask, refreshTasks } =
+    useTasks();
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshTasks();
+    }, [refreshTasks]),
+  );
+
+  const handleToggleComplete = async (id: number, completed: boolean) => {
+    try {
+      await updateTask(id, { completed: !completed });
+    } catch {
+      Alert.alert("Error", "Failed to update task");
+    }
   };
-  const deleteTask = (id: string) => {
-    // https://reactnative.dev/docs/alert
+
+  const handleDeleteTask = (id: number) => {
     Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
+      { text: "Cancel", style: "cancel" },
       {
         text: "Yes",
         style: "destructive",
-        onPress: () => {
-          setTasks(tasks.filter((task) => task.id !== id));
+        onPress: async () => {
+          try {
+            await deleteTask(id);
+          } catch {
+            Alert.alert("Error", "Failed to delete task");
+          }
         },
       },
     ]);
   };
   const renderTask = ({ item }: { item: Task }) => (
-    <TouchableOpacity
+    <View
       style={[
         styles.taskItem,
         { backgroundColor: priorityColors[item.priority] },
       ]}
-      onPress={() => toggleTask(item.id)}
     >
-      <View style={styles.taskContent}>
+      <TouchableOpacity
+        style={styles.taskContent}
+        onPress={() => handleToggleComplete(item.id!, item.completed)}
+      >
         <Text
           style={[styles.taskTitle, item.completed && styles.completedTask]}
         >
           {item.title}
         </Text>
         <Text style={styles.taskDescription}>{item.description}</Text>
-      </View>
-      <Text style={styles.taskStatus}>
+      </TouchableOpacity>
+
+      <View style={styles.taskActions}>
+        <Pressable onPress={() => handleDeleteTask(item.id!)}>
+          <Ionicons name="trash" size={24} color="black" />
+        </Pressable>
+
         {item.completed ? (
           <Ionicons name="checkmark-circle" size={24} color="green" />
         ) : (
           <Ionicons name="ellipse-outline" size={24} color="red" />
         )}
-      </Text>
-      <Pressable onPress={() => deleteTask(item.id)}>
-        <Ionicons name="trash" size={24} color="black" />
-      </Pressable>
-    </TouchableOpacity>
+      </View>
+    </View>
   );
   let filteredTasks = tasks;
 
@@ -104,6 +96,21 @@ export default function TasksScreen() {
 
   if (filter === "active") {
     filteredTasks = tasks.filter((task) => !task.completed);
+  }
+  if (loading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Text>Loading tasks...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
   }
   return (
     <View style={styles.container}>
@@ -140,10 +147,14 @@ export default function TasksScreen() {
       <FlatList
         data={filteredTasks}
         renderItem={renderTask}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id?.toString() || ""}
         style={styles.list}
+        ListEmptyComponent={
+          <View style={styles.centered}>
+            <Text>No tasks yet!</Text>
+          </View>
+        }
       />
-
       <Link href="/add-task" asChild>
         <TouchableOpacity style={styles.addButton}>
           <Text style={styles.addButtonText}>+ Add Task</Text>
@@ -200,5 +211,17 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  taskActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    color: "red",
   },
 });
