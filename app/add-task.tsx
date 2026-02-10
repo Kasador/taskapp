@@ -1,20 +1,41 @@
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
+  Alert,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useTasks } from "../hooks/useTasks";
+
 export default function AddTaskScreen() {
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
+  const { createTask } = useTasks();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const handleSave = () => {
-    if (title.trim()) {
-      // In a real app, this would save to state management or database
-      console.log("Saving task:", { title, description });
+  const handleSave = async () => {
+    if (!title.trim()) {
+      Alert.alert("Missing title", "Please enter a title.");
+      return;
+    }
+
+    try {
+      const now = new Date().toISOString();
+
+      await createTask({
+        title: title.trim(),
+        description: description.trim(),
+        completed: false,
+        priority,
+        createdAt: now,
+        updatedAt: now,
+      });
+
       router.back();
+    } catch (e) {
+      Alert.alert("Error", "Failed to save task.");
     }
   };
   return (
@@ -36,6 +57,27 @@ export default function AddTaskScreen() {
           multiline
           numberOfLines={4}
         />
+        <Text style={styles.label}>Priority</Text>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          {(["low", "medium", "high"] as const).map((p) => (
+            <TouchableOpacity
+              key={p}
+              onPress={() => setPriority(p)}
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 14,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: "#ddd",
+                backgroundColor: priority === p ? "#007AFF" : "white",
+              }}
+            >
+              <Text style={{ color: priority === p ? "white" : "black" }}>
+                {p.charAt(0).toUpperCase() + p.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Save Task</Text>
         </TouchableOpacity>

@@ -78,6 +78,7 @@ class WebStorageService {
     return updatedTask;
   }
   async deleteTask(id: number): Promise<boolean> {
+    console.log("Deleting task with id:", id);
     const tasks = await this.getTasks();
     const initialLength = tasks.length;
     const filteredTasks = tasks.filter((task) => task.id !== id);

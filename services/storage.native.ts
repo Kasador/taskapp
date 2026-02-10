@@ -78,5 +78,50 @@ class NativeStorageService {
     };
   }
   // Additional CRUD methods...
+  async deleteTask(id: number): Promise<boolean> {
+    // delete task
+    if (!this.db) throw new Error("Database not initialized");
+
+    await this.db.runAsync(`DELETE FROM tasks WHERE id = ?`, [id]);
+
+    return true;
+  }
+  async updateTask(id: number, updates: Partial<Task>): Promise<Task | null> {
+    // update task
+    if (!this.db) throw new Error("Database not initialized");
+
+    const existing = await this.db.getFirstAsync(
+      `SELECT * FROM tasks WHERE id = ?`,
+      [id],
+    );
+
+    if (!existing) return null;
+
+    const update: Task = {
+      ...(existing as any),
+      completed: Boolean((existing as any).completed),
+      ...updates,
+      id,
+      updatedAt: new Date().toISOString(),
+    };
+
+    await this.db.runAsync(
+      `
+      UPDATE tasks
+      SET title = ?, description = ?, completed = ?, priority = ?, updatedAt = ?
+      WHERE id = ?
+      `,
+      [
+        update.title,
+        update.description ?? "",
+        update.completed ? 1 : 0,
+        update.priority,
+        update.updatedAt,
+        id,
+      ],
+    );
+
+    return update;
+  }
 }
 export default new NativeStorageService();

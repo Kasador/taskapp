@@ -4,6 +4,7 @@ import React, { useCallback, useState } from "react";
 import {
   Alert,
   FlatList,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -40,7 +41,20 @@ export default function TasksScreen() {
     }
   };
 
-  const handleDeleteTask = (id: number) => {
+  const handleDeleteTask = async (id: number) => {
+    console.log("Attempting to delete task with id:", id);
+    if (Platform.OS === "web") {
+      // I need to added Platform for the web version, other the alert wouldn't pop up and it wouldn't have deleted the task.
+      const ok = window.confirm("Are you sure you want to delete this task?");
+      if (!ok) return;
+
+      try {
+        await deleteTask(id);
+      } catch (error) {
+        window.alert("Failed to delete task");
+      }
+      return;
+    }
     Alert.alert("Delete Task", "Are you sure you want to delete this task?", [
       { text: "Cancel", style: "cancel" },
       {
