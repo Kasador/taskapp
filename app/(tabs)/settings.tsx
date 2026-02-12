@@ -1,18 +1,23 @@
 import { StyleSheet } from "react-native";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 
 export default function SettingsScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Settings</Text>
       <View
         style={styles.separator}
         lightColor="#eee"
         darkColor="rgba(255,255,255,0.1)"
       />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
+      {/* <EditScreenInfo path="app/(tabs)/two.tsx" /> */}
+      <Text
+        style={{ marginTop: 20, paddingHorizontal: 20, textAlign: "center" }}
+      >
+        This is a placeholder for the settings screen. You can add your settings
+        options here.
+      </Text>
     </View>
   );
 }
