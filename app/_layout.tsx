@@ -14,6 +14,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 
 import { useRouter } from "expo-router";
 import { Platform } from "react-native";
+import "../styles/global.css";
 
 export {
   // Catch any errors thrown by the Layout component.
