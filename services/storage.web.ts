@@ -5,9 +5,11 @@ export interface Task {
   description: string;
   completed: boolean;
   priority: "low" | "medium" | "high";
+  category: "Work" | "Personal" | "Health";
   createdAt: string;
   updatedAt: string;
 }
+
 class WebStorageService {
   private tasksKey = "cda_tasks";
   private idCounterKey = "cda_tasks_id_counter";

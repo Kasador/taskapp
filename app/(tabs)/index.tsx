@@ -23,9 +23,9 @@ export default function TasksScreen() {
   };
 
   const [filter, setFilter] = useState<"all" | "completed" | "active">("all");
-
   const { tasks, loading, error, deleteTask, updateTask, refreshTasks } =
     useTasks();
+  console.log("tasks sample:", tasks[0]);
 
   useFocusEffect(
     useCallback(() => {
@@ -87,8 +87,11 @@ export default function TasksScreen() {
           {item.title}
         </Text>
         <Text style={styles.taskDescription}>{item.description}</Text>
-      </TouchableOpacity>
 
+        <Text style={{ fontSize: 12, color: "#444", marginTop: 4 }}>
+          {item.category}
+        </Text>
+      </TouchableOpacity>
       <View style={styles.taskActions}>
         <Pressable onPress={() => handleDeleteTask(item.id!)}>
           <Ionicons name="trash" size={24} color="black" />

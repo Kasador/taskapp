@@ -5,9 +5,11 @@ export interface Task {
   description: string;
   completed: boolean;
   priority: "low" | "medium" | "high";
+  category: "Work" | "Personal" | "Health";
   createdAt: string;
   updatedAt: string;
 }
+
 class NativeStorageService {
   private db: SQLite.SQLiteDatabase | null = null;
   async init(): Promise<void> {
@@ -30,6 +32,7 @@ class NativeStorageService {
         description TEXT,
         completed INTEGER DEFAULT 0,
         priority TEXT DEFAULT 'medium',
+        category TEXT DEFAULT 'Work',
         createdAt TEXT NOT NULL,
         updatedAt TEXT NOT NULL
       );
@@ -59,14 +62,15 @@ class NativeStorageService {
 
     const result = await this.db.runAsync(
       `
-      INSERT INTO tasks (title, description, completed, priority, createdAt, updatedAt)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO tasks (title, description, completed, priority, category, createdAt, updatedAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
       [
         taskWithTimestamps.title,
         taskWithTimestamps.description,
         taskWithTimestamps.completed ? 1 : 0,
         taskWithTimestamps.priority,
+        taskWithTimestamps.category,
         taskWithTimestamps.createdAt,
         taskWithTimestamps.updatedAt,
       ],
@@ -108,7 +112,7 @@ class NativeStorageService {
     await this.db.runAsync(
       `
       UPDATE tasks
-      SET title = ?, description = ?, completed = ?, priority = ?, updatedAt = ?
+      SET title = ?, description = ?, completed = ?, priority = ?, category = ?, updatedAt = ?
       WHERE id = ?
       `,
       [
@@ -116,6 +120,7 @@ class NativeStorageService {
         update.description ?? "",
         update.completed ? 1 : 0,
         update.priority,
+        update.category,
         update.updatedAt,
         id,
       ],
