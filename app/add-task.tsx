@@ -12,6 +12,9 @@ import { useTasks } from "../hooks/useTasks";
 
 export default function AddTaskScreen() {
   const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
+  const [category, setCategory] = useState<"Work" | "Personal" | "Health">(
+    "Work",
+  );
   const { createTask } = useTasks();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -29,6 +32,7 @@ export default function AddTaskScreen() {
         description: description.trim(),
         completed: false,
         priority,
+        category,
         createdAt: now,
         updatedAt: now,
       });
@@ -57,6 +61,7 @@ export default function AddTaskScreen() {
           multiline
           numberOfLines={4}
         />
+        {/* Priority selection UI */}
         <Text style={styles.label}>Priority</Text>
         <View style={{ flexDirection: "row", gap: 10 }}>
           {(["low", "medium", "high"] as const).map((p) => (
@@ -74,6 +79,28 @@ export default function AddTaskScreen() {
             >
               <Text style={{ color: priority === p ? "white" : "black" }}>
                 {p.charAt(0).toUpperCase() + p.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {/* Category selection UI */}
+        <Text style={styles.label}>Category</Text>
+        <View style={{ flexDirection: "row", gap: 10 }}>
+          {(["Work", "Personal", "Health"] as const).map((c) => (
+            <TouchableOpacity
+              key={c}
+              onPress={() => setCategory(c)}
+              style={{
+                paddingVertical: 10,
+                paddingHorizontal: 14,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: "#ddd",
+                backgroundColor: category === c ? "#007AFF" : "white",
+              }}
+            >
+              <Text style={{ color: category === c ? "white" : "black" }}>
+                {c}
               </Text>
             </TouchableOpacity>
           ))}
