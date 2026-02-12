@@ -10,3 +10,5 @@ Address these questions:
 - What would you improve with more time?
 
 - What surprised you about the development process?
+
+Cross platform development is challenging because you really need to think about and test on both platforms. Sometimes it will work on one platform but not the other. The time constraint was difficult and what I know works in React does not work or may be different in React Native. They are very similar but different at the same time. With more time I’d like to learn all the different ways of doing the same thing that I know in React. There are a lot of workarounds and a lot of tiny differences. This can be challenging and overwhelming in the beginning. And finally, what surprised me about the development process was how much goes into the overall management.
