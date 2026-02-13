@@ -15,8 +15,7 @@ export default function SettingsScreen() {
       <Text
         style={{ marginTop: 20, paddingHorizontal: 20, textAlign: "center" }}
       >
-        This is a placeholder for the settings screen. You can add your settings
-        options here.
+        White Theme
       </Text>
     </View>
   );
